@@ -97,7 +97,7 @@ Proposition d’arborescence (évolutive) :
    - Lecture de l’ID du capteur, des registres de calibration, puis obtention de valeurs de pression / température cohérentes.
 
 2. **Trames UART ST‑LINK**
-   - Formatage des mesures sous forme de chaîne texte (`TS;P;T`).
+   - Formatage des mesures sous forme de chaîne texte.
    - Envoi périodique sur l’UART relié au ST‑LINK.
    - Validation avec un terminal série sur PC.
 
@@ -127,4 +127,4 @@ Proposition d’arborescence (évolutive) :
 
 ## Auteur
 
-- Jérémy Georges-Durand – Étudiant ENIB
+- Jérémy Georges-Durand – Nicolas Cipresso - Étudiant ENIB
