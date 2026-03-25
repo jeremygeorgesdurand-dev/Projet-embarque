@@ -93,7 +93,7 @@ Proposition d’arborescence (évolutive) :
 
 1. **Bring‑up BMP280**
    - Configuration I²C sur la Nucleo‑F411RE.
-   - Intégration d’une librairie BMP280 pour STM32 (HAL I²C).
+   - Intégration d’une librairie BMP280 pour STM32 (HAL I²C - https://github.com/ciastkolog/BMP280_STM32).
    - Lecture de l’ID du capteur, des registres de calibration, puis obtention de valeurs de pression / température cohérentes.
 
 2. **Trames UART ST‑LINK**
