@@ -1,2 +1,2 @@
-# Projet-embarqu-
+# Projet-embarque
 Projet embarqué ENIB
