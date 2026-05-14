@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "STM32 Debug",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "stlink",
+      "device": "STM32F411RE",
+      "interface": "swd",
+      "executable": "C:/Users/admin/Documents/ENIB/Projet-embarque/WORKSPACE_F411_HAL_STM32CUBE/nucleoF411_base/main.elf",
+      "serverpath": "C:/ST/STM32CubeCLT_1.21.0/STLink-gdb-server/bin/ST-LINK_gdbserver.exe",
+      "stm32cubeprogrammer": "C:/ST/STM32CubeCLT_1.21.0/STM32CubeProgrammer/bin",
+      "runToEntryPoint": "main",
+      "gdbPath": "C:/ST/STM32CubeCLT_1.21.0/GNU-tools-for-STM32/bin/arm-none-eabi-gdb.exe"
+    }
+  ]
+}

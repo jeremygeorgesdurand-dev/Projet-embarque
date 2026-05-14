@@ -45,7 +45,7 @@
     
 		.syntax unified
 		.cpu cortex-m4
-		.fpu softvfp
+		.fpu fpv4-sp-d16
 		.thumb
 
 		.global		g_pfnVectors
@@ -64,6 +64,7 @@
 		.section  .text.Reset_Handler
 		.weak	Reset_Handler
 		.type	Reset_Handler, %function
+      .thumb_func 
 Reset_Handler:
 		// Copy the data segment initializers from flash to SRAM 
 		ldr		r0, =_sidata
@@ -92,8 +93,10 @@ bloope:
 		bl		__libc_init_array
 		
 		// Call the application's entry point
-		bl		main
-_exit:	b		_exit
+	        bl      main
+           .thumb_func
+_exit:
+        b       _exit
 
 		.size  Reset_Handler, .-Reset_Handler
 

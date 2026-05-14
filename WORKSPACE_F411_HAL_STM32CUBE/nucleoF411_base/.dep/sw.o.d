@@ -1,0 +1,59 @@
+mbed_shield/src/sw.o: mbed_shield/src/sw.c mbed_shield/inc/sw.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdint.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdint.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/_default_types.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/features.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_newlib_version.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_intsup.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_stdint.h \
+ STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_gpio.h include/board.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdlib.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/ieeefp.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_ansi.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/newlib.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/config.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stddef.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/reent.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_ansi.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/cdefs.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_types.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/_types.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/lock.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/stdlib.h \
+ include/stm32f411xe.h include/cmsis/core_cm4.h \
+ include/cmsis/core_cmInstr.h include/cmsis/cmsis_gcc.h \
+ include/cmsis/core_cmFunc.h include/cmsis/core_cmSimd.h \
+ STM32F4xx_HAL_Driver/inc/stm32f4xx_ll_rcc.h include/stm32f411xe.h \
+ include/config.h
+mbed_shield/inc/sw.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdint.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdint.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/_default_types.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/features.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_newlib_version.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_intsup.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_stdint.h:
+STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_gpio.h:
+include/board.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdlib.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/ieeefp.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_ansi.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/newlib.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/config.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stddef.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/reent.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/_ansi.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/cdefs.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/_types.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/_types.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/lock.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/machine/stdlib.h:
+include/stm32f411xe.h:
+include/cmsis/core_cm4.h:
+include/cmsis/core_cmInstr.h:
+include/cmsis/cmsis_gcc.h:
+include/cmsis/core_cmFunc.h:
+include/cmsis/core_cmSimd.h:
+STM32F4xx_HAL_Driver/inc/stm32f4xx_ll_rcc.h:
+include/stm32f411xe.h:
+include/config.h:
