@@ -102,7 +102,7 @@ LIBS    = $(DLIBS) $(ULIBS)
 ASFLAGS = $(INCDIR) $(DEFS) -Wa,--gdwarf2 $(ADEFS)
 CFLAGS = -std=c99 $(INCDIR) $(DEBUG) $(OPT) -Wall $(DEFS) -Wextra -Warray-bounds -Wno-unused-parameter -fomit-frame-pointer
 LDFLAGS = $(DEFS) -T$(LDSCRIPT) -lc -lgcc -lgcov -lm -Wl,-Map=$@.map,--gc-sections $(LIBDIR)
-LDFLAGS += -specs=nano.specs -specs=nosys.specs
+LDFLAGS += -specs=nano.specs -specs=nosys.specs -u _printf_float
 
 # Generate dependency information
 CFLAGS += -MD -MP -MF .dep/$(@F).d

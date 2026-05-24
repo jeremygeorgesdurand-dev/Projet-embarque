@@ -68,6 +68,16 @@ int main(void) {
 	hi2c1.Init.NoStretchMode   = 0;       // stretch activé = 0
 	HAL_I2C_Init(&hi2c1);
 
+	char scan_msg[32];
+	for (uint8_t addr = 0x75; addr < 0x78; addr++) {
+    uint8_t dummy = 0xD0;
+    if (HAL_I2C_Master_Transmit_IT(&hi2c1, addr, &dummy, 1, 1000) == I2C_OK) {
+        int l = snprintf(scan_msg, sizeof(scan_msg), "Found: 0x%02X\r\n", addr);
+        HAL_UART_Transmit(&huart2, (uint8_t*)scan_msg, l);
+    }
+    HAL_Delay(10);
+}
+
 	char *test2 = "I2C INIT OK\r\n";
 	HAL_UART_Transmit(&huart2, (uint8_t*)test2, 13);
 	HAL_Delay(100);
@@ -76,7 +86,7 @@ int main(void) {
     bmp280_params_t params;
     bmp280_init_default_params(&params);
     bmp280.i2c  = &hi2c1;
-    bmp280.addr = BMP280_I2C_ADDRESS_0;  // 0x76 — à vérifier selon câblage
+    bmp280.addr = BMP280_I2C_ADDRESS_1;  // 0x77 
 
     if (!bmp280_init(&bmp280, &params)) {
         // Erreur : blink LED d'erreur
@@ -92,19 +102,29 @@ int main(void) {
 	char *ok = "BMP280 OK\r\n";
 	HAL_UART_Transmit(&huart2, (uint8_t*)ok, 11);
 
-    float pressure, temperature;
-    char  msg[64];
+float pressure = 0.0f, temperature = 0.0f;
+char msg[64];
 
-    while (1) {
-        bmp280_read_float(&bmp280, &temperature, &pressure, NULL);
+while (1) {
+    bool ok = bmp280_read_float(&bmp280, &temperature, &pressure, NULL);
 
-        // Format : "TS;P;T\r\n"
-        int len = snprintf(msg, sizeof(msg), "%lu;%.2f;%.2f\r\n",
-                           HAL_GetTick(), pressure, temperature);
+    if (ok) {
+        int32_t press_int = (int32_t)(pressure / 100.0f);
+        int32_t press_dec = (int32_t)(pressure / 1.0f) % 100;
+        int32_t temp_int  = (int32_t)(temperature);
+        int32_t temp_dec  = (int32_t)(temperature * 100) % 100;
+        if (temp_dec < 0) temp_dec = -temp_dec;
+
+        int len = snprintf(msg, sizeof(msg), "%lu;%ld.%02ld;%ld.%02ld\r\n",
+                           HAL_GetTick(), press_int, press_dec, temp_int, temp_dec);
         HAL_UART_Transmit(&huart2, (uint8_t*)msg, len);
-
-        HAL_Delay(500);
+    } else {
+        char *err = "READ FAIL\r\n";
+        HAL_UART_Transmit(&huart2, (uint8_t*)err, 10);
     }
+
+    HAL_Delay(500);
+}
 }
 //============================================================
 
