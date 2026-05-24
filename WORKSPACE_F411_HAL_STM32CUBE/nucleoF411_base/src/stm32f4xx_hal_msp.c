@@ -37,6 +37,7 @@ void HAL_MspInit(void)
 	  HAL_TIM2_MspInit();
 	  HAL_TIM5_MspInit();
 	  HAL_UART2_MspInit();
+	  HAL_I2C1_MspInit();
 	  HAL_LCD_MspInit();
 
 }
@@ -77,7 +78,23 @@ void  HAL_TIM5_MspInit(void)
 //===========================================================
 void HAL_UART2_MspInit(void)
 {
-	// A COMPLETER
+    // 1. Activer les horloges
+    __USART2_CLK_ENABLE();
+    // GPIOA déjà activé dans HAL_MspInit()
+
+    // 2. Configurer PA2 (TX) et PA3 (RX) en alternate function
+    GPIO_InitTypeDef GPIO_InitStruct;
+
+    GPIO_InitStruct.Pin       = GPIO_PIN_2 | GPIO_PIN_3;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull      = GPIO_NOPULL;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;   // stm32f4xx_hal_gpio_ex.h
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    // 3. Priorité IRQ (facultatif si tu n'utilises pas les IT pour l'instant)
+    NVIC_SetPriority(USART2_IRQn, USART2_IRQ_PRIO);
+    NVIC_EnableIRQ(USART2_IRQn);
 }
 //===========================================================
 
@@ -121,5 +138,27 @@ void HAL_LCD_MspInit()
 	  NVIC_EnableIRQ(SPI1_IRQn);
 
 
+}
+
+void HAL_I2C1_MspInit(void)
+{
+    // 1. Activer l'horloge I2C1
+    __I2C1_CLK_ENABLE();
+    // GPIOB déjà activé dans HAL_MspInit()
+
+    // 2. PB8 = SCL, PB9 = SDA en Alternate Function Open-Drain
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.Pin       = GPIO_PIN_8 | GPIO_PIN_9;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_OD;       // Open-Drain obligatoire pour I²C
+    GPIO_InitStruct.Pull      = GPIO_NOPULL;           // Pull-up hardware sur le shield
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+    GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    // 3. IRQ I2C
+    NVIC_SetPriority(I2C1_EV_IRQn, I2C1_EV_IRQ_PRIO);
+    NVIC_EnableIRQ(I2C1_EV_IRQn);
+    NVIC_SetPriority(I2C1_ER_IRQn, I2C1_ER_IRQ_PRIO);
+    NVIC_EnableIRQ(I2C1_ER_IRQn);
 }
 

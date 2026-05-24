@@ -31,7 +31,12 @@ src/main.o: src/main.c include/stm32f4xx_hal_msp.h include/stm32f411xe.h \
  mbed_shield/inc/sw.h mbed_shield/inc/lm75.h \
  STM32F4xx_HAL_Driver/inc/stm32f4xx_hal.h \
  STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_conf.h \
- STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_def.h include/stm32f4xx.h
+ STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_def.h include/stm32f4xx.h \
+ include/bmp280.h include/stm32f4xx_hal_compat.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdbool.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdio.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/stdio.h
 include/stm32f4xx_hal_msp.h:
 include/stm32f411xe.h:
 include/cmsis/core_cm4.h:
@@ -75,3 +80,9 @@ STM32F4xx_HAL_Driver/inc/stm32f4xx_hal.h:
 STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_conf.h:
 STM32F4xx_HAL_Driver/inc/stm32f4xx_hal_def.h:
 include/stm32f4xx.h:
+include/bmp280.h:
+include/stm32f4xx_hal_compat.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdbool.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdio.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/stdio.h:

@@ -35,7 +35,8 @@ SRC  = startup/stm32f411_periph.c startup/sys_handlers.c \
        mbed_shield/src/lcd_128x32.c \
        src/stm32f4xx_hal_msp.c \
        src/stm32f4xx_it.c \
-       src/${PROJ}.c 
+       src/${PROJ}.c  \
+       src/bmp280.c
 
 # List ASM source files here
 ASRC = startup/startup_stm32f411xe.s
