@@ -14,6 +14,7 @@
 #define EXTI4_IRQ_PRIO      6
 #define USART2_IRQ_PRIO     7
 #define SPI1_IRQ_PRIO		4
+#define USART1_IRQ_PRIO     6
 
 void HAL_GPIO_LEDS_MspInit(void);
 void HAL_TIM2_MspInit(void);
@@ -24,6 +25,7 @@ void HAL_I2C1_MspInit(void);
 void HAL_EXTI_MspInit(void);
 void HAL_GPIO_SWITCH_UP_EXTI_MspInit(void);
 void HAL_LCD_MspInit(void);
+void HAL_UART1_MspInit(void);
 
 //===========================================================
 void HAL_MspInit(void)
@@ -39,6 +41,7 @@ void HAL_MspInit(void)
 	  HAL_UART2_MspInit();
 	  HAL_I2C1_MspInit();
 	  HAL_LCD_MspInit();
+	  HAL_UART1_MspInit();
 
 }
 //===========================================================
@@ -76,6 +79,23 @@ void  HAL_TIM5_MspInit(void)
 // TX --> PA2
 // RX --> PA3
 //===========================================================
+
+void HAL_UART1_MspInit(void)
+{
+    __USART1_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitStruct.Pin       = GPIO_PIN_9 | GPIO_PIN_10;
+    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull      = GPIO_NOPULL;
+    GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    NVIC_SetPriority(USART1_IRQn, USART1_IRQ_PRIO);
+    NVIC_EnableIRQ(USART1_IRQn);
+}
+
 void HAL_UART2_MspInit(void)
 {
     // 1. Activer les horloges

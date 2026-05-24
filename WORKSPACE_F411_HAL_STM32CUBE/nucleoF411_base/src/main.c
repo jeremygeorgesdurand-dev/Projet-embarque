@@ -9,11 +9,13 @@
 #include "stm32f4xx_hal.h"
 #include "bmp280.h"
 #include <stdio.h> 
+#include <string.h>
 
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim5;
 UART_HandleTypeDef huart2;
 I2C_HandleTypeDef hi2c1;
+UART_HandleTypeDef huart1;
 
 BMP280_HandleTypedef bmp280;
 
@@ -37,8 +39,39 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 }
 //============================================================
+
+void xbee_configure(void) {
+    char buf[32];
+
+    HAL_UART_Transmit(&huart2, (uint8_t*)"XBee config...\r\n", 16);
+
+    // Silence de 1.2s puis +++
+    HAL_Delay(1200);
+    HAL_UART_Transmit(&huart1, (uint8_t*)"+++", 3);
+    HAL_Delay(1200);  // Attendre le OK sans le lire
+
+    // Envoyer les commandes AT
+    const char* cmds[] = {
+        "ATID1234\r",
+        "ATDL0000FFFF\r",
+        "ATDH00000000\r",
+        "ATWR\r",
+        "ATCN\r"
+    };
+
+    for (int i = 0; i < 5; i++) {
+        HAL_UART_Transmit(&huart1, (uint8_t*)cmds[i], strlen(cmds[i]));
+        HAL_Delay(500);
+        int l = snprintf(buf, sizeof(buf), "CMD: %s\r\n", cmds[i]);
+        HAL_UART_Transmit(&huart2, (uint8_t*)buf, l);
+    }
+
+    HAL_UART_Transmit(&huart2, (uint8_t*)"XBee configured!\r\n", 18);
+}
+
 int main(void) {
-    HAL_Init();
+
+	HAL_Init();
     HAL_MspInit();
 
 	
@@ -56,6 +89,17 @@ int main(void) {
 	char *test = "UART OK\r\n";
 	HAL_UART_Transmit(&huart2, (uint8_t*)test, 9);
 	HAL_Delay(100);
+
+	huart1.Instance        = USART1;
+	huart1.Init.BaudRate   = 9600;   // XBee Series 1 par défaut = 9600
+	huart1.Init.WordLength = 0;
+	huart1.Init.StopBits   = 0;
+	huart1.Init.Parity     = 0;
+
+	HAL_UART_Init(&huart1);	
+
+	char *test_xbee = "XBEE OK\r\n";
+	HAL_UART_Transmit(&huart1, (uint8_t*)test_xbee, 9);
 
 	hi2c1.Instance             = I2C1;
 	hi2c1.Init.ClockSpeed      = 100000;  // 100 kHz
@@ -101,7 +145,7 @@ int main(void) {
 
 	char *ok = "BMP280 OK\r\n";
 	HAL_UART_Transmit(&huart2, (uint8_t*)ok, 11);
-
+	xbee_configure();
 float pressure = 0.0f, temperature = 0.0f;
 char msg[64];
 
@@ -118,6 +162,7 @@ while (1) {
         int len = snprintf(msg, sizeof(msg), "%lu;%ld.%02ld;%ld.%02ld\r\n",
                            HAL_GetTick(), press_int, press_dec, temp_int, temp_dec);
         HAL_UART_Transmit(&huart2, (uint8_t*)msg, len);
+		HAL_UART_Transmit(&huart1, (uint8_t*)msg, len);
     } else {
         char *err = "READ FAIL\r\n";
         HAL_UART_Transmit(&huart2, (uint8_t*)err, 10);

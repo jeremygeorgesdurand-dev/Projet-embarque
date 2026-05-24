@@ -36,7 +36,9 @@ src/main.o: src/main.c include/stm32f4xx_hal_msp.h include/stm32f411xe.h \
  C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdbool.h \
  C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdio.h \
  C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h \
- C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/stdio.h
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/stdio.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/string.h \
+ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/string.h
 include/stm32f4xx_hal_msp.h:
 include/stm32f411xe.h:
 include/cmsis/core_cm4.h:
@@ -86,3 +88,5 @@ C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.
 C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdio.h:
 C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/include/stdarg.h:
 C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/stdio.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/string.h:
+C:\ST\STM32CubeCLT_1.21.0\GNU-tools-for-STM32\bin/../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/sys/string.h:

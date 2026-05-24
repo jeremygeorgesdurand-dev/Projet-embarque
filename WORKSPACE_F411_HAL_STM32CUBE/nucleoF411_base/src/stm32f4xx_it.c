@@ -11,6 +11,7 @@ extern TIM_HandleTypeDef htim5;
 extern UART_HandleTypeDef huart2;
 extern I2C_HandleTypeDef hi2c1;
 extern SPI_HandleTypeDef hspi1;
+extern UART_HandleTypeDef huart1;
 
 //===========================================================
 void SysTick_Handler(void)
@@ -22,12 +23,18 @@ void SysTick_Handler(void)
 #endif
 }
 
+
 //===========================================================
 void TIM5_IRQHandler(void)
 {
   HAL_TIM_IRQHandler(&htim5);
 }
 //===========================================================
+void USART1_IRQHandler(void)
+{
+    HAL_USART_IRQHandler(&huart1);
+}
+
 void USART2_IRQHandler(void)
 {
   HAL_USART_IRQHandler(&huart2);
