@@ -1,0 +1,11 @@
+# Serveur web + API REST
+flask>=3.0.0
+
+# Communication série (XBee / UART)
+pyserial>=3.5
+
+# ── Installation ──────────────────────────────────────────────────────────
+# pip install -r requirements.txt
+#
+# Python 3.10+ requis (usage de type hints X | Y et match/case potentiel)
+# SQLite est inclus dans la bibliothèque standard Python (pas d'installation nécessaire)

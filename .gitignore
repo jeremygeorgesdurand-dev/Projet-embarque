@@ -1,7 +1,46 @@
-# Artefacts de compilation
-*.o
+# ── Base de données SQLite ─────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── Environnements virtuels ────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.env
+
+# ── VS Code ───────────────────────────────────────────────────────────────
+.vscode/
+*.code-workspace
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── STM32CubeIDE / Eclipse ────────────────────────────────────────────────
+Debug/
+Release/
+*.launch
+.settings/
+.project
+.cproject
 *.elf
 *.bin
-*.hex
 *.map
-.dep/
+*.list
