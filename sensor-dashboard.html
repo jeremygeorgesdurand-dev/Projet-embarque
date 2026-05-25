@@ -103,17 +103,21 @@ main{padding:var(--space-6);max-width:1200px;width:100%;margin-inline:auto;
 .mini-val{font-size:var(--text-sm);font-family:var(--font-mono);font-weight:600;color:var(--color-text)}
 
 /* ── KPI ROW ── */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-4)}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
 .kpi-card{
   background:var(--color-surface);border-radius:var(--radius-lg);
   border:1px solid var(--color-border);padding:var(--space-4) var(--space-5);
-  box-shadow:var(--shadow-sm)
+  box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:var(--space-4)
 }
+.kpi-icon{width:36px;height:36px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:var(--color-surface-offset);color:var(--color-text-muted)}
+.kpi-body{}
 .kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;
-  letter-spacing:.06em;font-weight:500;margin-bottom:var(--space-1)}
+  letter-spacing:.06em;font-weight:500;margin-bottom:2px}
 .kpi-value{font-size:var(--text-lg);font-weight:700;font-family:var(--font-mono);
-  font-variant-numeric:tabular-nums}
-.kpi-sub{font-size:var(--text-xs);color:var(--color-text-faint);font-family:var(--font-mono)}
+  font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi-sub{font-size:var(--text-xs);color:var(--color-text-faint);font-family:var(--font-mono);margin-top:1px}
 
 /* ── CHARTS ── */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6)}
@@ -158,7 +162,8 @@ tr.new-row{animation:slideIn .3s ease-out}
 .cell-time{color:var(--color-text-faint);font-size:var(--text-xs)}
 .cell-raw{color:var(--color-text-faint);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ── THEME TOGGLE ── */
+/* ── HEADER BUTTONS ── */
+.header-actions{display:flex;align-items:center;gap:var(--space-3)}
 .theme-toggle{
   width:36px;height:36px;border-radius:var(--radius-md);
   display:flex;align-items:center;justify-content:center;
@@ -168,10 +173,67 @@ tr.new-row{animation:slideIn .3s ease-out}
 .badge-live{font-size:var(--text-xs);padding:2px var(--space-2);border-radius:9999px;
   background:color-mix(in oklch,var(--color-success) 15%,var(--color-surface));
   color:var(--color-success);font-weight:600;font-family:var(--font-mono)}
+.btn-reset{
+  display:flex;align-items:center;gap:var(--space-2);
+  padding:var(--space-1) var(--space-3);border-radius:var(--radius-md);
+  font-size:var(--text-xs);font-weight:500;
+  border:1px solid var(--color-border);color:var(--color-text-muted)
+}
+.btn-reset:hover{background:color-mix(in oklch,var(--color-error) 12%,var(--color-surface));
+  color:var(--color-error);border-color:color-mix(in oklch,var(--color-error) 40%,transparent)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-lg);padding:var(--space-8);
+  max-width:360px;width:90%;box-shadow:var(--shadow-md);
+  display:flex;flex-direction:column;gap:var(--space-6)
+}
+.modal-icon{
+  width:40px;height:40px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  background:color-mix(in oklch,var(--color-error) 12%,var(--color-surface));
+  color:var(--color-error)
+}
+.modal-title{font-size:var(--text-base);font-weight:700;margin-bottom:var(--space-2)}
+.modal-body{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6}
+.modal-body strong{color:var(--color-text)}
+.modal-actions{display:flex;gap:var(--space-3);justify-content:flex-end}
+.btn-cancel{
+  padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:500;
+  border:1px solid var(--color-border);color:var(--color-text-muted)
+}
+.btn-cancel:hover{background:var(--color-surface-offset);color:var(--color-text)}
+.btn-danger{
+  padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:600;
+  background:var(--color-error);color:#fff
+}
+.btn-danger:hover{opacity:.85}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:var(--space-6);right:var(--space-6);z-index:200;
+  background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-md);padding:var(--space-3) var(--space-5);
+  font-size:var(--text-sm);display:flex;align-items:center;gap:var(--space-3);
+  box-shadow:var(--shadow-md);
+  transform:translateY(120%);transition:transform .3s cubic-bezier(0.16,1,0.3,1)
+}
+.toast.show{transform:translateY(0)}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--color-success)}
+.toast-dot.err{background:var(--color-error)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
-  .sensors-row,.charts-row{grid-template-columns:1fr}
+  .sensors-row,.charts-row,.kpi-row{grid-template-columns:1fr}
   main{padding:var(--space-4)}
   th:last-child,td:last-child{display:none}
 }
@@ -188,8 +250,12 @@ tr.new-row{animation:slideIn .3s ease-out}
     </svg>
     Sensor Dashboard
   </div>
-  <div style="display:flex;align-items:center;gap:var(--space-3)">
+  <div class="header-actions">
     <span class="badge-live">LIVE</span>
+    <button class="btn-reset" onclick="openResetModal()" title="Réinitialiser la base de données">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+      Réinitialiser DB
+    </button>
     <button class="theme-toggle" data-theme-toggle aria-label="Basculer le thème">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -208,7 +274,6 @@ tr.new-row{animation:slideIn .3s ease-out}
 
   <!-- Sensor panels -->
   <div class="sensors-row">
-    <!-- Température -->
     <div class="sensor-panel">
       <div class="sensor-header">
         <div class="sensor-icon temp">
@@ -231,8 +296,6 @@ tr.new-row{animation:slideIn .3s ease-out}
         <div class="mini-stat"><div class="mini-label">Moy</div><div class="mini-val" id="avg-temp">—</div></div>
       </div>
     </div>
-
-    <!-- Pression -->
     <div class="sensor-panel">
       <div class="sensor-header">
         <div class="sensor-icon press">
@@ -261,14 +324,24 @@ tr.new-row{animation:slideIn .3s ease-out}
   <!-- KPIs -->
   <div class="kpi-row">
     <div class="kpi-card">
-      <div class="kpi-label">Total mesures</div>
-      <div class="kpi-value" id="kpi-count">0</div>
-      <div class="kpi-sub">entrées DB</div>
+      <div class="kpi-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="kpi-body">
+        <div class="kpi-label">Total mesures</div>
+        <div class="kpi-value" id="kpi-count">0</div>
+        <div class="kpi-sub">entrées DB</div>
+      </div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Fréquence</div>
-      <div class="kpi-value" id="kpi-freq">—</div>
-      <div class="kpi-sub">trames/min</div>
+      <div class="kpi-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="kpi-body">
+        <div class="kpi-label">Fréquence</div>
+        <div class="kpi-value" id="kpi-freq">—</div>
+        <div class="kpi-sub">trames/min</div>
+      </div>
     </div>
   </div>
 
@@ -315,6 +388,29 @@ tr.new-row{animation:slideIn .3s ease-out}
     </table>
   </div>
 </main>
+</div>
+
+<!-- MODAL RESET -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </div>
+    <div>
+      <div class="modal-title">Réinitialiser la base de données ?</div>
+      <div class="modal-body">Cette action va <strong>supprimer toutes les mesures</strong> enregistrées.<br>Le port série restera connecté et continuera d'enregistrer de nouvelles données.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-danger" onclick="doReset()">Supprimer tout</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-dot" id="toast-dot"></div>
+  <span id="toast-msg">—</span>
 </div>
 
 <script>
@@ -377,7 +473,6 @@ function setPoints(n,el){
 
 // ── STATE ────────────────────────────────────────────────────
 let lastId=null,lastTs=null;
-const timestamps=[];
 
 function fmtTime(iso){
   if(!iso)return'—';
@@ -427,7 +522,8 @@ async function pollData(){
       }
       if(lastId!==latest.id){lastId=latest.id;await refreshHistory();}
     }
-    const sr=await fetch('/api/stats?n=100');const stats=await sr.json();
+    // Stats sur TOUTE la DB (plus de paramètre ?n=)
+    const sr=await fetch('/api/stats');const stats=await sr.json();
     if(stats.temperature&&stats.temperature.count>0){
       document.getElementById('min-temp').textContent=stats.temperature.min?.toFixed(2)??'—';
       document.getElementById('max-temp').textContent=stats.temperature.max?.toFixed(2)??'—';
@@ -437,6 +533,9 @@ async function pollData(){
       document.getElementById('min-press').textContent=stats.pressure.min?.toFixed(2)??'—';
       document.getElementById('max-press').textContent=stats.pressure.max?.toFixed(2)??'—';
       document.getElementById('avg-press').textContent=stats.pressure.avg?.toFixed(2)??'—';
+    }
+    if(stats.freq_per_min!==undefined){
+      document.getElementById('kpi-freq').textContent=stats.freq_per_min;
     }
     document.getElementById('ms-since').textContent=
       lastTs?'Dernière trame il y a '+elapsed(lastTs):'En attente…';
@@ -448,16 +547,6 @@ async function refreshHistory(){
   document.getElementById('total-badge').textContent=d.total+' entrées';
   document.getElementById('kpi-count').textContent=d.total;
 
-  // Fréquence estimée
-  if(d.data.length>=2){
-    const newest=new Date(d.data[0].timestamp+'Z');
-    const oldest=new Date(d.data[d.data.length-1].timestamp+'Z');
-    const mins=(newest-oldest)/60000;
-    const freq=mins>0?Math.round(d.data.length/mins):'—';
-    document.getElementById('kpi-freq').textContent=freq;
-  }
-
-  // Charts — ordre chrono
   const sorted=[...d.data].reverse();
   const labels=sorted.map(x=>fmtTime(x.timestamp));
   chartTemp.data.labels=labels;
@@ -467,7 +556,6 @@ async function refreshHistory(){
   chartPress.data.datasets[0].data=sorted.map(x=>x.pressure);
   chartPress.update();
 
-  // Table
   const tbody=document.getElementById('table-body');
   const rows=d.data.slice(0,50);
   tbody.innerHTML=rows.map((x,i)=>`
@@ -480,6 +568,43 @@ async function refreshHistory(){
     </tr>`).join('');
 }
 
+// ── RESET ────────────────────────────────────────────────────
+function openResetModal(){document.getElementById('modal-overlay').classList.add('open')}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
+function handleOverlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()})
+
+async function doReset(){
+  closeModal();
+  try{
+    const r=await fetch('/api/reset',{method:'POST'});const d=await r.json();
+    if(d.ok){
+      showToast('Base de données réinitialisée',false);
+      lastId=null;lastTs=null;
+      ['val-temp','val-press','min-temp','max-temp','avg-temp','min-press','max-press','avg-press']
+        .forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});
+      document.getElementById('kpi-count').textContent='0';
+      document.getElementById('kpi-freq').textContent='—';
+      document.getElementById('total-badge').textContent='0 entrées';
+      document.getElementById('table-body').innerHTML=
+        '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--color-text-faint)">Base réinitialisée — en attente de nouvelles données…</td></tr>';
+      chartTemp.data.labels=[];chartTemp.data.datasets[0].data=[];chartTemp.update();
+      chartPress.data.labels=[];chartPress.data.datasets[0].data=[];chartPress.update();
+    }else{showToast('Erreur lors de la réinitialisation',true)}
+  }catch(e){showToast('Impossible de joindre le serveur',true)}
+}
+
+let toastTimer=null;
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-dot').className='toast-dot'+(err?' err':'');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
 pollStatus();pollData();
 setInterval(pollStatus,5000);
 setInterval(pollData,1000);

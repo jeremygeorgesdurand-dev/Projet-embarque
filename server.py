@@ -18,7 +18,7 @@ import os
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
 SERIAL_PORT = "COM3"        # Linux: /dev/ttyUSB0
-BAUD_RATE   = 115200
+BAUD_RATE   = 9600
 DB_PATH     = "sensor_data.db"
 HOST        = "0.0.0.0"
 PORT        = 5000
@@ -130,22 +130,45 @@ def api_history():
 
 @app.route("/api/stats")
 def api_stats():
-    n = int(request.args.get("n", 100))
+    """
+    Calcule MIN / MAX / AVG sur TOUTE la base de données (pas seulement les N dernières).
+    """
     conn = sqlite3.connect(DB_PATH)
-    def stat(col):
-        row = conn.execute(f"""
-            SELECT MIN({col}), MAX({col}), AVG({col}), COUNT(*)
-            FROM (SELECT {col} FROM measurements
-                  WHERE {col} IS NOT NULL ORDER BY id DESC LIMIT ?)
-        """, (n,)).fetchone()
-        return row
-    rp = stat("pressure")
-    rt = stat("temperature")
+
+    rp = conn.execute("""
+        SELECT MIN(pressure), MAX(pressure), AVG(pressure), COUNT(*)
+        FROM measurements WHERE pressure IS NOT NULL
+    """).fetchone()
+
+    rt = conn.execute("""
+        SELECT MIN(temperature), MAX(temperature), AVG(temperature), COUNT(*)
+        FROM measurements WHERE temperature IS NOT NULL
+    """).fetchone()
+
+    # Fréquence : trames reçues dans la dernière minute
+    freq_row = conn.execute("""
+        SELECT COUNT(*) FROM measurements
+        WHERE timestamp >= datetime('now', '-1 minute')
+    """).fetchone()
+
     conn.close()
+
     return jsonify({
         "pressure":    {"min": rp[0], "max": rp[1], "avg": round(rp[2], 3) if rp[2] else None, "count": rp[3]},
-        "temperature": {"min": rt[0], "max": rt[1], "avg": round(rt[2], 3) if rt[2] else None, "count": rt[3]}
+        "temperature": {"min": rt[0], "max": rt[1], "avg": round(rt[2], 3) if rt[2] else None, "count": rt[3]},
+        "freq_per_min": freq_row[0] if freq_row else 0
     })
+
+@app.route("/api/reset", methods=["POST"])
+def api_reset():
+    """Vide toutes les mesures sans supprimer le fichier .db."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("DELETE FROM measurements")
+    conn.execute("DELETE FROM sqlite_sequence WHERE name='measurements'")
+    conn.commit()
+    conn.close()
+    print("[DB] Base de données réinitialisée.")
+    return jsonify({"ok": True})
 
 if __name__ == "__main__":
     init_db()
