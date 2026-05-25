@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sensor Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+:root,[data-theme="light"]{
+  --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;
+  --color-surface-offset:#f3f0ec;--color-border:rgba(40,37,29,0.12);
+  --color-text:#28251d;--color-text-muted:#7a7974;--color-text-faint:#bab9b4;
+  --color-primary:#01696f;--color-primary-hover:#0c4e54;
+  --color-success:#437a22;--color-error:#a12c7b;--color-warning:#964219;
+  --color-temp:#bb653b;--color-press:#4f98a3;
+  --shadow-sm:0 1px 2px oklch(0.2 0.01 80/0.06);
+  --shadow-md:0 4px 12px oklch(0.2 0.01 80/0.08);
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;
+  --font-mono:'JetBrains Mono',monospace;--font-body:'Inter','Helvetica Neue',sans-serif;
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+  --text-sm:clamp(0.875rem,0.8rem + 0.35vw,1rem);
+  --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + 0.75vw,1.5rem);
+  --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-6:1.5rem;--space-8:2rem;--space-12:3rem;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+}
+[data-theme="dark"]{
+  --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;
+  --color-surface-offset:#22211f;--color-border:rgba(205,204,202,0.10);
+  --color-text:#cdccca;--color-text-muted:#797876;--color-text-faint:#5a5957;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;
+  --color-success:#6daa45;--color-error:#d163a7;
+  --color-temp:#fdab43;--color-press:#4f98a3;
+  --shadow-sm:0 1px 2px oklch(0 0 0/0.2);--shadow-md:0 4px 12px oklch(0 0 0/0.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
+  color:var(--color-text);background:var(--color-bg);line-height:1.6}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+a,button{transition:color var(--transition),background var(--transition),box-shadow var(--transition)}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-rows:auto 1fr;min-height:100dvh}
+header{
+  background:var(--color-surface);border-bottom:1px solid var(--color-border);
+  padding:var(--space-3) var(--space-6);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;box-shadow:var(--shadow-sm)
+}
+.logo{display:flex;align-items:center;gap:var(--space-3);font-weight:600;font-size:var(--text-sm)}
+.logo svg{color:var(--color-primary)}
+main{padding:var(--space-6);max-width:1200px;width:100%;margin-inline:auto;
+  display:flex;flex-direction:column;gap:var(--space-6)}
+
+/* ── STATUS ── */
+.status-bar{
+  display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);
+  background:var(--color-surface);border-radius:var(--radius-md);
+  border:1px solid var(--color-border);font-size:var(--text-sm)
+}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.dot.ok{background:var(--color-success);box-shadow:0 0 6px var(--color-success);animation:pulse 2s ease-in-out infinite}
+.dot.err{background:var(--color-error)}
+.dot.wait{background:var(--color-text-faint);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ms-since{margin-left:auto;font-size:var(--text-xs);color:var(--color-text-faint);font-family:var(--font-mono)}
+
+/* ── SENSOR PANELS ── */
+.sensors-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6)}
+.sensor-panel{
+  background:var(--color-surface);border-radius:var(--radius-lg);
+  border:1px solid var(--color-border);padding:var(--space-6);
+  display:flex;flex-direction:column;gap:var(--space-4);box-shadow:var(--shadow-sm)
+}
+.sensor-header{display:flex;align-items:center;gap:var(--space-2)}
+.sensor-icon{width:32px;height:32px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sensor-icon.temp{background:color-mix(in oklch,var(--color-temp) 15%,var(--color-surface));color:var(--color-temp)}
+.sensor-icon.press{background:color-mix(in oklch,var(--color-press) 15%,var(--color-surface));color:var(--color-press)}
+.sensor-name{font-size:var(--text-sm);font-weight:600;color:var(--color-text)}
+.sensor-unit-label{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+.sensor-value-row{display:flex;align-items:baseline;gap:var(--space-2)}
+.sensor-value{font-size:var(--text-xl);font-weight:700;font-family:var(--font-mono);
+  font-variant-numeric:tabular-nums;transition:color .2s}
+.sensor-value.temp-val{color:var(--color-temp)}
+.sensor-value.press-val{color:var(--color-press)}
+.sensor-value.flash{animation:flash .4s ease-out}
+@keyframes flash{0%{opacity:.4}100%{opacity:1}}
+.sensor-unit{font-size:var(--text-lg);color:var(--color-text-muted);font-family:var(--font-mono)}
+
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-2)}
+.mini-stat{background:var(--color-surface-offset);border-radius:var(--radius-sm);
+  padding:var(--space-2) var(--space-3)}
+.mini-label{font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:.05em}
+.mini-val{font-size:var(--text-sm);font-family:var(--font-mono);font-weight:600;color:var(--color-text)}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--space-4)}
+.kpi-card{
+  background:var(--color-surface);border-radius:var(--radius-lg);
+  border:1px solid var(--color-border);padding:var(--space-4) var(--space-5);
+  box-shadow:var(--shadow-sm)
+}
+.kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;
+  letter-spacing:.06em;font-weight:500;margin-bottom:var(--space-1)}
+.kpi-value{font-size:var(--text-lg);font-weight:700;font-family:var(--font-mono);
+  font-variant-numeric:tabular-nums}
+.kpi-sub{font-size:var(--text-xs);color:var(--color-text-faint);font-family:var(--font-mono)}
+
+/* ── CHARTS ── */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6)}
+.chart-card{
+  background:var(--color-surface);border-radius:var(--radius-lg);
+  border:1px solid var(--color-border);padding:var(--space-6);box-shadow:var(--shadow-sm)
+}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)}
+.chart-title{font-size:var(--text-sm);font-weight:600}
+.chart-controls{display:flex;gap:var(--space-2)}
+.btn-ghost{
+  font-size:var(--text-xs);padding:var(--space-1) var(--space-3);border-radius:var(--radius-sm);
+  border:1px solid var(--color-border);color:var(--color-text-muted)
+}
+.btn-ghost.active,.btn-ghost:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+.chart-wrap{position:relative;height:200px}
+
+/* ── TABLE ── */
+.table-card{
+  background:var(--color-surface);border-radius:var(--radius-lg);
+  border:1px solid var(--color-border);overflow:hidden;box-shadow:var(--shadow-sm)
+}
+.table-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border)
+}
+.table-title{font-size:var(--text-sm);font-weight:600}
+.badge{font-size:var(--text-xs);padding:2px var(--space-2);border-radius:9999px;
+  background:color-mix(in oklch,var(--color-primary) 15%,var(--color-surface));
+  color:var(--color-primary);font-weight:500;font-family:var(--font-mono)}
+table{width:100%;border-collapse:collapse}
+th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--color-text-muted);font-weight:500;padding:var(--space-2) var(--space-4);
+  text-align:left;border-bottom:1px solid var(--color-border);background:var(--color-surface-offset)}
+td{padding:var(--space-2) var(--space-4);font-size:var(--text-sm);border-bottom:1px solid var(--color-border);
+  font-family:var(--font-mono)}
+tr:last-child td{border-bottom:none}
+tr.new-row{animation:slideIn .3s ease-out}
+@keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.cell-temp{color:var(--color-temp);font-weight:600}
+.cell-press{color:var(--color-press);font-weight:600}
+.cell-time{color:var(--color-text-faint);font-size:var(--text-xs)}
+.cell-raw{color:var(--color-text-faint);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle{
+  width:36px;height:36px;border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--color-border);color:var(--color-text-muted)
+}
+.theme-toggle:hover{background:var(--color-surface-offset);color:var(--color-text)}
+.badge-live{font-size:var(--text-xs);padding:2px var(--space-2);border-radius:9999px;
+  background:color-mix(in oklch,var(--color-success) 15%,var(--color-surface));
+  color:var(--color-success);font-weight:600;font-family:var(--font-mono)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .sensors-row,.charts-row{grid-template-columns:1fr}
+  main{padding:var(--space-4)}
+  th:last-child,td:last-child{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">
+    <svg aria-label="logo" width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="22" height="22" rx="4"/>
+      <path d="M9 20v-6M14 20V9M19 20v-4"/>
+      <circle cx="14" cy="7" r="2" fill="currentColor" stroke="none"/>
+    </svg>
+    Sensor Dashboard
+  </div>
+  <div style="display:flex;align-items:center;gap:var(--space-3)">
+    <span class="badge-live">LIVE</span>
+    <button class="theme-toggle" data-theme-toggle aria-label="Basculer le thème">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="dot wait" id="status-dot"></div>
+    <span id="status-text">Connexion…</span>
+    <span class="ms-since" id="ms-since">—</span>
+  </div>
+
+  <!-- Sensor panels -->
+  <div class="sensors-row">
+    <!-- Température -->
+    <div class="sensor-panel">
+      <div class="sensor-header">
+        <div class="sensor-icon temp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="sensor-name">Température</div>
+          <div class="sensor-unit-label">BMP280 / capteur thermique</div>
+        </div>
+      </div>
+      <div class="sensor-value-row">
+        <span class="sensor-value temp-val" id="val-temp">—</span>
+        <span class="sensor-unit">°C</span>
+      </div>
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mini-label">Min</div><div class="mini-val" id="min-temp">—</div></div>
+        <div class="mini-stat"><div class="mini-label">Max</div><div class="mini-val" id="max-temp">—</div></div>
+        <div class="mini-stat"><div class="mini-label">Moy</div><div class="mini-val" id="avg-temp">—</div></div>
+      </div>
+    </div>
+
+    <!-- Pression -->
+    <div class="sensor-panel">
+      <div class="sensor-header">
+        <div class="sensor-icon press">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v5l3 3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="sensor-name">Pression</div>
+          <div class="sensor-unit-label">BMP280 / pression atmosphérique</div>
+        </div>
+      </div>
+      <div class="sensor-value-row">
+        <span class="sensor-value press-val" id="val-press">—</span>
+        <span class="sensor-unit">hPa</span>
+      </div>
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mini-label">Min</div><div class="mini-val" id="min-press">—</div></div>
+        <div class="mini-stat"><div class="mini-label">Max</div><div class="mini-val" id="max-press">—</div></div>
+        <div class="mini-stat"><div class="mini-label">Moy</div><div class="mini-val" id="avg-press">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total mesures</div>
+      <div class="kpi-value" id="kpi-count">0</div>
+      <div class="kpi-sub">entrées DB</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Fréquence</div>
+      <div class="kpi-value" id="kpi-freq">—</div>
+      <div class="kpi-sub">trames/min</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title" style="color:var(--color-temp)">Température (°C)</span>
+        <div class="chart-controls">
+          <button class="btn-ghost active" onclick="setPoints(50,this)">50</button>
+          <button class="btn-ghost" onclick="setPoints(100,this)">100</button>
+          <button class="btn-ghost" onclick="setPoints(200,this)">200</button>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-temp"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title" style="color:var(--color-press)">Pression (hPa)</span>
+        <div class="chart-controls">
+          <button class="btn-ghost active" onclick="setPoints(50,this)">50</button>
+          <button class="btn-ghost" onclick="setPoints(100,this)">100</button>
+          <button class="btn-ghost" onclick="setPoints(200,this)">200</button>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-press"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Mesures récentes</span>
+      <span class="badge" id="total-badge">0 entrées</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>Heure</th>
+        <th style="color:var(--color-temp)">Temp. (°C)</th>
+        <th style="color:var(--color-press)">Pression (hPa)</th>
+        <th>Trame brute</th>
+      </tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+// ── THEME ────────────────────────────────────────────────────
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]'),html=document.documentElement;
+  let d=html.getAttribute('data-theme')||'dark';
+  const MOON='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  const SUN='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  btn.innerHTML=d==='dark'?SUN:MOON;
+  btn.addEventListener('click',()=>{
+    d=d==='dark'?'light':'dark';
+    html.setAttribute('data-theme',d);
+    btn.innerHTML=d==='dark'?SUN:MOON;
+    updateChartTheme();
+  });
+})();
+
+// ── CHARTS ───────────────────────────────────────────────────
+let chartPoints=50;
+function makeChart(id,color){
+  const ctx=document.getElementById(id).getContext('2d');
+  return new Chart(ctx,{
+    type:'line',
+    data:{labels:[],datasets:[{label:'',data:[],
+      borderColor:color,backgroundColor:color+'18',
+      borderWidth:2,pointRadius:2,pointHoverRadius:4,tension:0.3,fill:true
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,animation:{duration:150},
+      plugins:{legend:{display:false},tooltip:{
+        backgroundColor:'#1c1b19',titleColor:'#cdccca',bodyColor:'#797876',
+        borderColor:'rgba(205,204,202,0.10)',borderWidth:1,padding:8,cornerRadius:6
+      }},
+      scales:{
+        x:{grid:{color:'rgba(128,128,128,0.07)'},ticks:{color:'#797876',font:{size:10,family:'JetBrains Mono'},maxTicksLimit:6,maxRotation:0}},
+        y:{grid:{color:'rgba(128,128,128,0.07)'},ticks:{color:'#797876',font:{size:10,family:'JetBrains Mono'}}}
+      }
+    }
+  });
+}
+const chartTemp =makeChart('chart-temp', '#fdab43');
+const chartPress=makeChart('chart-press','#4f98a3');
+
+function updateChartTheme(){
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gc=dark?'rgba(128,128,128,0.07)':'rgba(0,0,0,0.05)';
+  const tc=dark?'#797876':'#7a7974';
+  [chartTemp,chartPress].forEach(c=>{
+    c.options.scales.x.grid.color=gc;c.options.scales.y.grid.color=gc;
+    c.options.scales.x.ticks.color=tc;c.options.scales.y.ticks.color=tc;
+    c.update('none');
+  });
+}
+function setPoints(n,el){
+  chartPoints=n;
+  document.querySelectorAll('.btn-ghost').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.btn-ghost').forEach(b=>{if(b.textContent==n)b.classList.add('active')});
+}
+
+// ── STATE ────────────────────────────────────────────────────
+let lastId=null,lastTs=null;
+const timestamps=[];
+
+function fmtTime(iso){
+  if(!iso)return'—';
+  const d=new Date(iso+'Z');
+  return d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function elapsed(iso){
+  if(!iso)return'';
+  const s=Math.round((Date.now()-new Date(iso+'Z').getTime())/1000);
+  if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m '+s%60+'s';
+  return Math.floor(s/3600)+'h '+Math.floor((s%3600)/60)+'m';
+}
+function flash(el){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
+
+// ── POLL STATUS ──────────────────────────────────────────────
+async function pollStatus(){
+  try{
+    const r=await fetch('/api/status');const s=await r.json();
+    const dot=document.getElementById('status-dot');
+    const txt=document.getElementById('status-text');
+    if(s.connected){
+      dot.className='dot ok';txt.innerHTML='<strong>Port série connecté</strong>';
+    }else{
+      dot.className='dot err';txt.innerHTML='<strong>Déconnecté</strong> — '+s.last_error;
+    }
+  }catch(e){
+    document.getElementById('status-dot').className='dot err';
+    document.getElementById('status-text').textContent='Serveur inaccessible';
+  }
+}
+
+// ── POLL DATA ────────────────────────────────────────────────
+async function pollData(){
+  try{
+    const lr=await fetch('/api/latest');const latest=await lr.json();
+    if(latest){
+      lastTs=latest.timestamp;
+      if(latest.temperature!==null){
+        const vt=latest.temperature.toFixed(2);
+        const el=document.getElementById('val-temp');
+        if(el.textContent!==vt){el.textContent=vt;flash(el)}
+      }
+      if(latest.pressure!==null){
+        const vp=latest.pressure.toFixed(2);
+        const el=document.getElementById('val-press');
+        if(el.textContent!==vp){el.textContent=vp;flash(el)}
+      }
+      if(lastId!==latest.id){lastId=latest.id;await refreshHistory();}
+    }
+    const sr=await fetch('/api/stats?n=100');const stats=await sr.json();
+    if(stats.temperature&&stats.temperature.count>0){
+      document.getElementById('min-temp').textContent=stats.temperature.min?.toFixed(2)??'—';
+      document.getElementById('max-temp').textContent=stats.temperature.max?.toFixed(2)??'—';
+      document.getElementById('avg-temp').textContent=stats.temperature.avg?.toFixed(2)??'—';
+    }
+    if(stats.pressure&&stats.pressure.count>0){
+      document.getElementById('min-press').textContent=stats.pressure.min?.toFixed(2)??'—';
+      document.getElementById('max-press').textContent=stats.pressure.max?.toFixed(2)??'—';
+      document.getElementById('avg-press').textContent=stats.pressure.avg?.toFixed(2)??'—';
+    }
+    document.getElementById('ms-since').textContent=
+      lastTs?'Dernière trame il y a '+elapsed(lastTs):'En attente…';
+  }catch(e){console.warn(e)}
+}
+
+async function refreshHistory(){
+  const r=await fetch('/api/history?limit='+chartPoints);const d=await r.json();
+  document.getElementById('total-badge').textContent=d.total+' entrées';
+  document.getElementById('kpi-count').textContent=d.total;
+
+  // Fréquence estimée
+  if(d.data.length>=2){
+    const newest=new Date(d.data[0].timestamp+'Z');
+    const oldest=new Date(d.data[d.data.length-1].timestamp+'Z');
+    const mins=(newest-oldest)/60000;
+    const freq=mins>0?Math.round(d.data.length/mins):'—';
+    document.getElementById('kpi-freq').textContent=freq;
+  }
+
+  // Charts — ordre chrono
+  const sorted=[...d.data].reverse();
+  const labels=sorted.map(x=>fmtTime(x.timestamp));
+  chartTemp.data.labels=labels;
+  chartTemp.data.datasets[0].data=sorted.map(x=>x.temperature);
+  chartTemp.update();
+  chartPress.data.labels=labels;
+  chartPress.data.datasets[0].data=sorted.map(x=>x.pressure);
+  chartPress.update();
+
+  // Table
+  const tbody=document.getElementById('table-body');
+  const rows=d.data.slice(0,50);
+  tbody.innerHTML=rows.map((x,i)=>`
+    <tr class="${i===0?'new-row':''}">
+      <td class="cell-time">${x.id}</td>
+      <td class="cell-time">${fmtTime(x.timestamp)}</td>
+      <td class="cell-temp">${x.temperature!==null?x.temperature.toFixed(2):'—'}</td>
+      <td class="cell-press">${x.pressure!==null?x.pressure.toFixed(2):'—'}</td>
+      <td class="cell-raw" title="${x.raw}">${x.raw}</td>
+    </tr>`).join('');
+}
+
+pollStatus();pollData();
+setInterval(pollStatus,5000);
+setInterval(pollData,1000);
+setInterval(()=>{
+  if(lastTs)document.getElementById('ms-since').textContent='Dernière trame il y a '+elapsed(lastTs);
+},1000);
+</script>
+</body>
+</html>
