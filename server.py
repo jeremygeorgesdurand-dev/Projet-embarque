@@ -11,8 +11,7 @@ import serial
 import sqlite3
 import threading
 import time
-import re
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, jsonify, send_from_directory, request
 import os
 
@@ -24,7 +23,7 @@ HOST        = "0.0.0.0"
 PORT        = 5000
 STATIC_DIR  = os.path.dirname(os.path.abspath(__file__))
 
-# ── BASE DE DONNÉES ──────────────────────────────────────────────────────────
+# ── BASE DE DONNÉES ─────────────────────────────────────────────────────────
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     conn.execute("""
@@ -39,17 +38,24 @@ def init_db():
     conn.commit()
     conn.close()
 
-def insert_measurement(raw: str, pressure: float | None, temperature: float | None):
+def now_utc() -> str:
+    """
+    Retourne le timestamp UTC au format reconnu par SQLite : 'YYYY-MM-DD HH:MM:SS'
+    (espace, pas T — sinon datetime('now','-1 minute') ne fonctionne pas)
+    """
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+def insert_measurement(raw: str, pressure, temperature):
     conn = sqlite3.connect(DB_PATH)
     conn.execute(
         "INSERT INTO measurements (timestamp, raw, pressure, temperature) VALUES (?, ?, ?, ?)",
-        (datetime.utcnow().isoformat(), raw, pressure, temperature)
+        (now_utc(), raw, pressure, temperature)
     )
     conn.commit()
     conn.close()
 
 # ── PARSING ──────────────────────────────────────────────────────────────────
-def parse_line(line: str) -> tuple[float | None, float | None]:
+def parse_line(line: str):
     """
     Format attendu : anything;pression;temperature
     Ex.            : 219861;1014.87;30.20
@@ -131,7 +137,8 @@ def api_history():
 @app.route("/api/stats")
 def api_stats():
     """
-    Calcule MIN / MAX / AVG sur TOUTE la base de données (pas seulement les N dernières).
+    MIN/MAX/AVG sur TOUTE la base.
+    Fréquence = nb de trames dans la dernière minute (timestamp UTC format 'YYYY-MM-DD HH:MM:SS').
     """
     conn = sqlite3.connect(DB_PATH)
 
@@ -145,7 +152,7 @@ def api_stats():
         FROM measurements WHERE temperature IS NOT NULL
     """).fetchone()
 
-    # Fréquence : trames reçues dans la dernière minute
+    # datetime('now') retourne UTC au format 'YYYY-MM-DD HH:MM:SS' — même format que nos timestamps
     freq_row = conn.execute("""
         SELECT COUNT(*) FROM measurements
         WHERE timestamp >= datetime('now', '-1 minute')
