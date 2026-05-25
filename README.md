@@ -2,14 +2,6 @@
 
 > Projet réalisé dans le cadre du cursus ingénieur à l'**ENIB** (École Nationale d'Ingénieurs de Brest) — 2025/2026.
 
-## Équipe
-
-| Étudiant | Rôle principal |
-|---|---|
-| **Nicolas Cipresso** | Firmware STM32, communication I²C / BMP280 |
-| **Fabien Struillou** | Configuration XBee, liaison radio |
-| **Jérémy Georges-Durand** | Serveur Flask, base de données, dashboard web |
-
 ---
 
 ## Présentation générale
