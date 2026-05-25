@@ -17,7 +17,7 @@ import os
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
 SERIAL_PORT = "COM3"        # Linux: /dev/ttyUSB0
-BAUD_RATE   = 9600
+BAUD_RATE   = 115200
 DB_PATH     = "sensor_data.db"
 HOST        = "0.0.0.0"
 PORT        = 5000
